@@ -1,4 +1,4 @@
-package com.dmz.be_airdnd;
+package com.dmz.airdnd;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
