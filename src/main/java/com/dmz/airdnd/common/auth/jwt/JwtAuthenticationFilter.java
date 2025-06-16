@@ -5,9 +5,12 @@ import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import com.dmz.airdnd.common.auth.UserContext;
+import com.dmz.airdnd.common.auth.dto.UserInfo;
 import com.dmz.airdnd.common.dto.ApiResponse;
 import com.dmz.airdnd.common.exception.ErrorCode;
 import com.dmz.airdnd.common.exception.JwtValidationException;
+import com.dmz.airdnd.user.domain.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
@@ -61,16 +64,18 @@ public class JwtAuthenticationFilter implements Filter {
 		String accessToken = authHeader.substring(7);
 		try {
 			Claims claims = jwtUtil.validateToken(accessToken);
-			httpRequest.setAttribute("id", claims.getSubject());
-			httpRequest.setAttribute("role", claims.get("role"));
+			UserContext.set(
+				new UserInfo(Long.valueOf(claims.getSubject()), Role.valueOf(claims.get("role", String.class))));
+
+			filterChain.doFilter(httpRequest, httpResponse);
 		} catch (JwtValidationException e) {
 			writeJsonResponse(httpResponse,
 				ApiResponse.failure(ErrorCode.EMPTY_JWT_TOKEN.getMessage(), ErrorCode.EMPTY_JWT_TOKEN.getCode())
 			);
 			return;
+		} finally {
+			UserContext.clear();
 		}
-
-		filterChain.doFilter(httpRequest, httpResponse);
 	}
 
 	private boolean isPermitAllPath(String uri) {
