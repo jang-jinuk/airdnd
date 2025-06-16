@@ -20,14 +20,15 @@ public enum ErrorCode {
 	UNSUPPORTED_JWT_TOKEN(401, "UNSUPPORTED_JWT_TOKEN", "지원하지 않는 JWT 토큰입니다."),
 	INVALID_JWT_TOKEN(401, "INVALID_JWT_TOKEN", "JWT 토큰이 잘못되었습니다."),
 	EMPTY_JWT_TOKEN(401, "EMPTY_JWT_TOKEN", "헤더에 JWT 토큰이 없습니다."),
-
 	// 요청 포맷 관련
 	INVALID_REQUEST_FORMAT(400, "INVALID_REQUEST_FORMAT", "잘못된 요청 형식입니다."),
-
 	// 서버 오류
 	INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버에 오류가 발생했습니다."),
 	// 파일 관련
-	PAYLOAD_TOO_LARGE(413, "PAYLOAD_TOO_LARGE", "파일크기가 혀용된 최대 크기를 초과하였습니다.");
+	PAYLOAD_TOO_LARGE(413, "PAYLOAD_TOO_LARGE", "파일크기가 혀용된 최대 크기를 초과하였습니다."),
+	// 인가 관련
+	FORBIDDEN(403, "FORBIDDEN", "해당 작업을 수행할 권한이 없습니다."),
+	;
 
 	private final int status;
 	private final String code;
