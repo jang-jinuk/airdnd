@@ -28,6 +28,8 @@ public enum ErrorCode {
 	PAYLOAD_TOO_LARGE(413, "PAYLOAD_TOO_LARGE", "파일크기가 혀용된 최대 크기를 초과하였습니다."),
 	// 인가 관련
 	FORBIDDEN(403, "FORBIDDEN", "해당 작업을 수행할 권한이 없습니다."),
+	// Google API 관련
+	GEOCODING_FAILED(502, "GEOCODING_FAILED", "주소 정보를 가져오는 데 실패했습니다.")
 	;
 
 	private final int status;
