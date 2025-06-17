@@ -1,5 +1,7 @@
 package com.dmz.airdnd.accommodation.domain;
 
+import org.locationtech.jts.geom.Point;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,22 +25,13 @@ public class Address {
 	@Column(nullable = false, length = 50)
 	private String country;
 
-	@Column(nullable = false, length = 50)
-	private String city;
-
-	@Column(length = 50)
-	private String state;
-
-	@Column(length = 20)
-	private String postalCode;
+	@Column(length = 255, nullable = false)
+	private String baseAddress;
 
 	@Column(length = 255)
-	private String addressLine1;
+	private String detailedAddress;
 
-	@Column(length = 255)
-	private String addressLine2;
-
-	@Column(nullable = false)
-	private String location;
+	@Column(nullable = false, columnDefinition = "POINT SRID 4326 NOT NULL")
+	private Point location;
 }
 

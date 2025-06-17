@@ -44,7 +44,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-    // @CucumberContextConfiguration 등 Spring 통합 지원
+
+    implementation 'org.hibernate:hibernate-spatial:6.2.7.Final'    // Hibernate 에 공간 데이터 지원을 더해주는 확장 모듈
+    implementation 'org.locationtech.jts:jts-core:1.19.0'           // 자바 기반의 기하(Geometry) 연산 라이브러리
 }
 
 tasks.named('test') {
