@@ -27,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements Filter {
 
+	private static final int BEARER_PREFIX_LENGTH = 7;
+
 	private final JwtUtil jwtUtil;
 
 	@Override
@@ -61,7 +63,7 @@ public class JwtAuthenticationFilter implements Filter {
 		}
 
 		// 토큰 유효성 검사
-		String accessToken = authHeader.substring(7);
+		String accessToken = authHeader.substring(BEARER_PREFIX_LENGTH);
 		try {
 			Claims claims = jwtUtil.validateToken(accessToken);
 			UserContext.set(
