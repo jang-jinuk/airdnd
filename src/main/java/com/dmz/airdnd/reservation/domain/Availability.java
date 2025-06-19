@@ -1,10 +1,8 @@
 package com.dmz.airdnd.reservation.domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import com.dmz.airdnd.accommodation.domain.Accommodation;
-import com.dmz.airdnd.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,51 +11,34 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "availability", uniqueConstraints = {
+	@UniqueConstraint(columnNames = {"accommodation_id", "date"})
+})
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Reservation {
+public class Availability {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "guest_id", nullable = false)
-	private User guest;
+	@Column(nullable = false)
+	private LocalDate date;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "accommodation_id", nullable = false)
 	private Accommodation accommodation;
 
-	@Column(nullable = false)
-	private LocalDate checkInDate;
-
-	@Column(nullable = false)
-	private LocalDate checkOutDate;
-
-	@Column(nullable = false)
-	private int numberOfGuests;
-
-	@Column(nullable = false)
-	private long totalPrice;
-
-	@Column(nullable = false, length = 20)
-	private ReservationStatus status;
-
-	@Column(nullable = false, length = 50)
-	private String timezone;
-
-	@Column(nullable = false, length = 50)
-	private String currency;
-
-	@Column(nullable = false)
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "reservation_id", nullable = false)
+	private Reservation reservation;
 }
