@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter implements Filter {
 			filterChain.doFilter(httpRequest, httpResponse);
 		} catch (JwtValidationException e) {
 			writeJsonResponse(httpResponse,
-				ApiResponse.failure(ErrorCode.EMPTY_JWT_TOKEN.getMessage(), ErrorCode.EMPTY_JWT_TOKEN.getCode())
+				ApiResponse.failure(e.getMessage(), ErrorCode.INVALID_JWT_TOKEN.getCode())
 			);
 			return;
 		} finally {
