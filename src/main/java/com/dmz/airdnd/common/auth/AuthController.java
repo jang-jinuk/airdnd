@@ -23,7 +23,7 @@ public class AuthController {
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody UserRequest userRequest) {
 		authService.signup(userRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success());
 	}
 
 	@PostMapping("/login")
