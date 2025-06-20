@@ -14,10 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.dmz.airdnd.accommodation.domain.Accommodation;
 import com.dmz.airdnd.common.auth.jwt.JwtUtil;
-import com.dmz.airdnd.fixture.TestAccommodationFactory;
-import com.dmz.airdnd.fixture.TestAddressFactory;
 import com.dmz.airdnd.fixture.TestReservationFactory;
 import com.dmz.airdnd.fixture.TestUserFactory;
 import com.dmz.airdnd.reservation.dto.request.ReservationRequest;
@@ -46,14 +43,19 @@ class ReservationControllerTest {
 	void success_booking() throws Exception {
 		//given
 		String token = generateToken();
-		Accommodation accommodation = TestAccommodationFactory
-			.createTestAccommodation(1L, TestAddressFactory.createTestAddress(1L));
 
-		ReservationRequest reservationRequest = TestReservationFactory.createReservationRequest();
-		String json = objectMapper.writeValueAsString(reservationRequest);
+		ReservationRequest request = TestReservationFactory.createReservationRequest();
+		String json = objectMapper.writeValueAsString(request);
 
-		ReservationResponse reservationResponse = TestReservationFactory.createReservationResponse(accommodation);
-		when(reservationService.booking(any(), any())).thenReturn(reservationResponse);
+		ReservationResponse response = ReservationResponse.builder()
+			.name("Test Accommodation")
+			.checkInDate(request.getCheckInDate())
+			.checkOutDate(request.getCheckOutDate())
+			.numberOfGuests(request.getNumberOfGuests())
+			.totalPrice(200000L)
+			.currency("KRW")
+			.build();
+		when(reservationService.booking(any(), any())).thenReturn(response);
 
 		//when + then
 		mockMvc.perform(post("/api/accommodations/1/reservations")
@@ -62,12 +64,12 @@ class ReservationControllerTest {
 				.content(json))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.success").value(true))
-			.andExpect(jsonPath("$.data.name").value("한라산뷰다락룸개인실"))
-			.andExpect(jsonPath("$.data.checkInDate").value("2025-07-21"))
-			.andExpect(jsonPath("$.data.checkOutDate").value("2025-07-23"))
-			.andExpect(jsonPath("$.data.numberOfGuests").value(4))
-			.andExpect(jsonPath("$.data.totalPrice").value(200000))
-			.andExpect(jsonPath("$.data.currency").value("KRW"))
+			.andExpect(jsonPath("$.data.name").value(response.getName()))
+			.andExpect(jsonPath("$.data.checkInDate").value(response.getCheckInDate().toString()))
+			.andExpect(jsonPath("$.data.checkOutDate").value(response.getCheckOutDate().toString()))
+			.andExpect(jsonPath("$.data.numberOfGuests").value(response.getNumberOfGuests()))
+			.andExpect(jsonPath("$.data.totalPrice").value(response.getTotalPrice()))
+			.andExpect(jsonPath("$.data.currency").value(response.getCurrency()))
 			.andExpect(jsonPath("$.error").isEmpty());
 
 		//service 호출 확인

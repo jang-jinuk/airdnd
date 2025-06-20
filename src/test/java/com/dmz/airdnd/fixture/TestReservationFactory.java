@@ -34,15 +34,4 @@ public class TestReservationFactory {
 			.timezone("Asia/Seoul")
 			.build();
 	}
-
-	public static ReservationResponse createReservationResponse(Accommodation accommodation) {
-		return ReservationResponse.builder()
-			.name(accommodation.getName())
-			.checkInDate(LocalDate.of(2025, 7, 21))
-			.checkOutDate(LocalDate.of(2025, 7, 23))
-			.numberOfGuests(4)
-			.totalPrice(200000L)
-			.currency(accommodation.getCurrency())
-			.build();
-	}
 }

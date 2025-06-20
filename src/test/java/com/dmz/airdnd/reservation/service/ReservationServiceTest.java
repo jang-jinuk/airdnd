@@ -14,14 +14,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.dmz.airdnd.accommodation.domain.Accommodation;
-import com.dmz.airdnd.accommodation.domain.Address;
 import com.dmz.airdnd.accommodation.repository.AccommodationRepository;
 import com.dmz.airdnd.common.auth.UserContext;
 import com.dmz.airdnd.common.auth.dto.UserInfo;
 import com.dmz.airdnd.common.exception.DuplicateReservationException;
 import com.dmz.airdnd.common.exception.ErrorCode;
 import com.dmz.airdnd.fixture.TestAccommodationFactory;
-import com.dmz.airdnd.fixture.TestAddressFactory;
 import com.dmz.airdnd.fixture.TestReservationFactory;
 import com.dmz.airdnd.fixture.TestUserFactory;
 import com.dmz.airdnd.reservation.domain.Reservation;
@@ -60,8 +58,7 @@ class ReservationServiceTest {
 	void setup() {
 		UserContext.set(new UserInfo(1L, Role.USER));
 		guest = TestUserFactory.createTestUser(1L);
-		Address address = TestAddressFactory.createTestAddress(1L);
-		accommodation = TestAccommodationFactory.createTestAccommodation(1L, address);
+		accommodation = TestAccommodationFactory.createTestAccommodation(1L);
 		reservation = TestReservationFactory.createTestReservation(guest, accommodation);
 	}
 

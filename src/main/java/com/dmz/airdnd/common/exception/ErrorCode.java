@@ -32,6 +32,9 @@ public enum ErrorCode {
 	DUPLICATE_RESERVATION(409, "DUPLICATE_RESERVATION", "이미 존재하는 예약입니다."),
 	// Google API 관련
 	GEOCODING_FAILED(502, "GEOCODING_FAILED", "주소 정보를 가져오는 데 실패했습니다."),
+	// 필터링 요청 관련
+	INVALID_DATE_RANGE(400, "INVALID_DATE_RANGE", "체크인은 체크아웃 이전이어야 합니다."),
+	INVALID_MIN_MAX_PRICE(400, "INVALID_MIN_MAX_PRICE", "최소 가격은 최대 가격보다 작아야 합니다."),
 	// 숙소 관련
 	ACCOMMODATION_NOT_FOUND(404, "ACCOMMODATION_NOT_FOUND", "해당 숙소를 찾을 수 없습니다."),
 	;

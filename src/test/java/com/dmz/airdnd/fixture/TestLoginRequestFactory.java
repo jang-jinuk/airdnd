@@ -10,10 +10,10 @@ public class TestLoginRequestFactory {
 			.build();
 	}
 
-	public static LoginRequest createLoginRequest(String invalidPassword) {
+	public static LoginRequest createLoginRequest(String password) {
 		return LoginRequest.builder()
 			.loginId("testUser")
-			.password(invalidPassword)
+			.password(password)
 			.build();
 	}
 }
