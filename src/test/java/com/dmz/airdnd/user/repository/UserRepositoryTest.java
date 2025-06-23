@@ -8,12 +8,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import com.dmz.airdnd.AbstractContainerBase;
+import com.dmz.airdnd.common.config.QuerydslConfig;
 import com.dmz.airdnd.fixture.TestUserFactory;
 import com.dmz.airdnd.user.domain.User;
 
 @DataJpaTest
+@Import(QuerydslConfig.class)
 public class UserRepositoryTest extends AbstractContainerBase {
 
 	@Autowired

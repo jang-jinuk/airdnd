@@ -1,12 +1,14 @@
 package com.dmz.airdnd.stepdefinitions;
 
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import com.dmz.airdnd.AbstractContainerBase;
+
 import com.dmz.airdnd.common.auth.AuthService;
 import com.dmz.airdnd.user.domain.Role;
 import com.dmz.airdnd.user.domain.User;
@@ -18,17 +20,8 @@ import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 
-import static org.hamcrest.Matchers.nullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest
-@AutoConfigureMockMvc
-@CucumberContextConfiguration
-public class SignUpStepDef extends AbstractContainerBase {
+public class SignUpStepDef {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -109,11 +102,11 @@ public class SignUpStepDef extends AbstractContainerBase {
 	@Then("오류 코드는 {string}이고, 메시지는 {string}이어야 한다.")
 	public void 오류_메시지_검증(String code, String expected) throws Exception {
 		resultActions
-				.andExpect(status().isConflict())
-				.andExpect(jsonPath("$.success").value(false))
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.error").isNotEmpty())
-				.andExpect(jsonPath("$.error.code").value(code))
-				.andExpect(jsonPath("$.error.message").value(expected));
+			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.data").isEmpty())
+			.andExpect(jsonPath("$.error").isNotEmpty())
+			.andExpect(jsonPath("$.error.code").value(code))
+			.andExpect(jsonPath("$.error.message").value(expected));
 	}
 }

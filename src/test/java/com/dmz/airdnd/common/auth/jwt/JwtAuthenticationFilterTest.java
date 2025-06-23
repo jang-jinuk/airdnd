@@ -1,9 +1,12 @@
 package com.dmz.airdnd.common.auth.jwt;
 
+import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.hibernate.validator.internal.util.Contracts.*;
 import static org.mockito.Mockito.*;
 
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +16,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.dmz.airdnd.common.auth.UserContext;
+import com.dmz.airdnd.common.auth.dto.UserInfo;
+import com.dmz.airdnd.user.domain.Role;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -37,6 +44,11 @@ class JwtAuthenticationFilterTest {
 	@Mock
 	private HttpServletResponse response;
 
+	@BeforeEach
+	void setup() {
+		UserContext.clear();
+	}
+
 	@ParameterizedTest
 	@MethodSource("provideRequestUris")
 	@DisplayName("JWT 토큰이 유효하면 필터를 통과하고 HttpServletRequest에 토큰 정보를 저장한다.")
@@ -48,15 +60,21 @@ class JwtAuthenticationFilterTest {
 
 		Claims claims = mock(Claims.class);
 		when(claims.getSubject()).thenReturn("1");
-		when(claims.get("role")).thenReturn("USER");
+		when(claims.get("role", String.class)).thenReturn("USER");
 		when(jwtUtil.validateToken("valid.token")).thenReturn(claims);
 
-		//when
+		//when + then
+		doAnswer(invocation -> {
+			UserInfo contextUser = UserContext.get();
+			assertNotNull(contextUser);
+			assertThat(contextUser.getId()).isEqualTo(1L);
+			assertThat(contextUser.getRole()).isEqualTo(Role.USER);
+
+			return null;
+		}).when(filterChain).doFilter(any(), any());
+
 		jwtAuthenticationFilter.doFilter(request, response, filterChain);
 
-		//then
-		verify(request).setAttribute("id", "1");
-		verify(request).setAttribute("role", "USER");
 		verify(filterChain).doFilter(request, response);
 	}
 

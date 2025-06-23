@@ -5,9 +5,12 @@ import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import com.dmz.airdnd.common.auth.UserContext;
+import com.dmz.airdnd.common.auth.dto.UserInfo;
 import com.dmz.airdnd.common.dto.ApiResponse;
 import com.dmz.airdnd.common.exception.ErrorCode;
 import com.dmz.airdnd.common.exception.JwtValidationException;
+import com.dmz.airdnd.user.domain.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
@@ -23,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements Filter {
+
+	private static final int BEARER_PREFIX_LENGTH = 7;
 
 	private final JwtUtil jwtUtil;
 
@@ -58,19 +63,21 @@ public class JwtAuthenticationFilter implements Filter {
 		}
 
 		// 토큰 유효성 검사
-		String accessToken = authHeader.substring(7);
+		String accessToken = authHeader.substring(BEARER_PREFIX_LENGTH);
 		try {
 			Claims claims = jwtUtil.validateToken(accessToken);
-			httpRequest.setAttribute("id", claims.getSubject());
-			httpRequest.setAttribute("role", claims.get("role"));
+			UserContext.set(
+				new UserInfo(Long.valueOf(claims.getSubject()), Role.valueOf(claims.get("role", String.class))));
+
+			filterChain.doFilter(httpRequest, httpResponse);
 		} catch (JwtValidationException e) {
 			writeJsonResponse(httpResponse,
-				ApiResponse.failure(ErrorCode.EMPTY_JWT_TOKEN.getMessage(), ErrorCode.EMPTY_JWT_TOKEN.getCode())
+				ApiResponse.failure(e.getMessage(), ErrorCode.INVALID_JWT_TOKEN.getCode())
 			);
 			return;
+		} finally {
+			UserContext.clear();
 		}
-
-		filterChain.doFilter(httpRequest, httpResponse);
 	}
 
 	private boolean isPermitAllPath(String uri) {
