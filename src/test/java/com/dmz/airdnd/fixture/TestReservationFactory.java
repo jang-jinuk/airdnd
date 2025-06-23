@@ -11,8 +11,9 @@ import com.dmz.airdnd.reservation.dto.request.ReservationRequest;
 import com.dmz.airdnd.user.domain.User;
 
 public class TestReservationFactory {
-	public static Reservation createTestReservation(User guest, Accommodation accommodation, LocalDate checkIn,
-		LocalDate checkOut) {
+	public static Reservation createTestReservation(User guest, Accommodation accommodation) {
+		LocalDate checkIn = LocalDate.of(2025, 7, 21);
+		LocalDate checkOut = LocalDate.of(2025, 7, 23);
 		return Reservation.builder()
 			.guest(guest)
 			.accommodation(accommodation)
