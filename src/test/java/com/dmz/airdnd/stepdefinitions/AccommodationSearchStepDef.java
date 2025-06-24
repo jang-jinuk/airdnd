@@ -115,7 +115,7 @@ public class AccommodationSearchStepDef {
 			.andExpect(jsonPath("$.data.totalPages").value(Integer.parseInt(totalPages)));
 	}
 
-	@Then("다음 정보의 숙소들이 반환되어야 한다.:")
+	@Then("다음 정보의 숙소들이 반환되어야 한다:")
 	public void 다음_이름의_숙소들이_반환되어야_한다(DataTable dataTable) throws Exception {
 		List<Map<String, String>> accommodations = dataTable.asMaps(String.class, String.class);
 

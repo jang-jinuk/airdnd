@@ -14,6 +14,9 @@ import io.cucumber.spring.CucumberContextConfiguration;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
+@CucumberContextConfiguration
+@SpringBootTest
+@AutoConfigureMockMvc
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:build/reports/cucumber.html, summary")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.dmz.airdnd")
 public class CucumberTestRunner {
