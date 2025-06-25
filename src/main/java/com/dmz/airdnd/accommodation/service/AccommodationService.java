@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,9 @@ import com.dmz.airdnd.accommodation.dto.response.AccommodationPageResponse;
 import com.dmz.airdnd.accommodation.mapper.AccommodationMapper;
 import com.dmz.airdnd.accommodation.domain.Label;
 import com.dmz.airdnd.accommodation.repository.AccommodationRepository;
+import com.dmz.airdnd.accommodation.repository.AddressRepository;
 import com.dmz.airdnd.common.exception.AccommodationNotFound;
+import com.dmz.airdnd.common.exception.DuplicateAddressException;
 import com.dmz.airdnd.common.exception.ErrorCode;
 import com.dmz.airdnd.common.exception.InvalidFilterConditionException;
 import com.dmz.airdnd.accommodation.repository.LabelRepository;
@@ -40,23 +43,29 @@ public class AccommodationService {
 
 	private final LabelRepository labelRepository;
 
+	private final AddressRepository addressRepository;
+
 	private final AddressService addressService;
 
 	@RoleCheck(Role.HOST)
 	public AccommodationCreateResponse createAccommodation(AccommodationCreateRequest request) {
-		Address address = addressService.getOrCreateByFullAddress(
-			request.getCountry(),
-			request.getBaseAddress(),
-			request.getDetailedAddress());
+		try {
+			Address address = addressService.getOrCreateByFullAddress(
+				request.getCountry(),
+				request.getBaseAddress(),
+				request.getDetailedAddress());
 
-		List<Label> labels = labelRepository.findAllById(request.getLabelIds());
-		if (labels.size() != request.getLabelIds().size()) {
-			throw new LabelNotFoundException(ErrorCode.LABEL_NOT_FOUND);
+			List<Label> labels = labelRepository.findAllById(request.getLabelIds());
+			if (labels.size() != request.getLabelIds().size()) {
+				throw new LabelNotFoundException(ErrorCode.LABEL_NOT_FOUND);
+			}
+
+			Accommodation newAccommodation = AccommodationMapper.toEntity(request, address, labels);
+			Accommodation saved = accommodationRepository.save(newAccommodation);
+			return AccommodationMapper.fromEntity(saved);
+		} catch (DataIntegrityViolationException dive) {
+			throw new DuplicateAddressException(ErrorCode.DUPLICATE_ADDRESS);
 		}
-
-		Accommodation newAccommodation = AccommodationMapper.toEntity(request, address, labels);
-		Accommodation saved = accommodationRepository.save(newAccommodation);
-		return AccommodationMapper.fromEntity(saved);
 	}
 
 	public Accommodation getAccommodationById(Long accommodationId) {

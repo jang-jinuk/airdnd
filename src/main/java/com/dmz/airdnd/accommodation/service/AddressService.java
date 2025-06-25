@@ -1,7 +1,6 @@
 package com.dmz.airdnd.accommodation.service;
 
-import java.util.Optional;
-
+import org.apache.commons.lang3.StringUtils;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
@@ -21,21 +20,17 @@ public class AddressService {
 	private final GeocodingClient geocodingClient;
 
 	public Address getOrCreateByFullAddress(String country, String baseAddress, String detailedAddress) {
-		String detail = Optional.ofNullable(detailedAddress)
-			.map(String::trim)
-			.orElse("");
+		String detail = StringUtils.trimToEmpty(detailedAddress);
 		Point geometryPoint = findPointFromBaseAddress(baseAddress);
 
-		return addressRepository
-			.findByBaseAddressAndDetailedAddress(baseAddress, detail)
-			.orElseGet(() -> addressRepository.save(
-				Address.builder()
-					.country(country)
-					.baseAddress(baseAddress)
-					.detailedAddress(detail)
-					.location(geometryPoint)
-					.build()
-			));
+		return addressRepository.findByBaseAddressAndDetailedAddress(baseAddress, detail)
+			.orElseGet(() -> Address.builder()
+				.country(country)
+				.baseAddress(baseAddress)
+				.detailedAddress(detail)
+				.location(geometryPoint)
+				.build()
+			);
 	}
 
 	private Point findPointFromBaseAddress(String baseAddress) {
