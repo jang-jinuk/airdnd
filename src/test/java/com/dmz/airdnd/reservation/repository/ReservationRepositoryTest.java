@@ -2,6 +2,8 @@ package com.dmz.airdnd.reservation.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +56,8 @@ class ReservationRepositoryTest extends AbstractContainerBase {
 	@DisplayName("예약을 등록할 수 있다.")
 	void success_saveReservation() {
 		//given
-		Reservation reservation = TestReservationFactory.createTestReservation(guest, accommodation);
+		Reservation reservation = TestReservationFactory.createTestReservation(guest, accommodation,
+			LocalDate.of(2025, 7, 21), LocalDate.of(2025, 7, 23));
 
 		//when
 		Reservation newReservation = reservationRepository.save(reservation);

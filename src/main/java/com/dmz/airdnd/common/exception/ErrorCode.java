@@ -30,6 +30,8 @@ public enum ErrorCode {
 	FORBIDDEN(403, "FORBIDDEN", "해당 작업을 수행할 권한이 없습니다."),
 	// 예약 관련
 	DUPLICATE_RESERVATION(409, "DUPLICATE_RESERVATION", "이미 존재하는 예약입니다."),
+	RESERVATION_IN_PROGRESS(409, "RESERVATION_IN_PROGRESS", "다른 사용자가 예약 중입니다."),
+	LOCK_INTERRUPTED(409, "LOCK_INTERRUPTED", "락 획득 중 인터럽트 발생"),
 	// Google API 관련
 	GEOCODING_FAILED(502, "GEOCODING_FAILED", "주소 정보를 가져오는 데 실패했습니다."),
 	// 필터링 요청 관련
@@ -37,6 +39,7 @@ public enum ErrorCode {
 	INVALID_MIN_MAX_PRICE(400, "INVALID_MIN_MAX_PRICE", "최소 가격은 최대 가격보다 작아야 합니다."),
 	// 숙소 관련
 	ACCOMMODATION_NOT_FOUND(404, "ACCOMMODATION_NOT_FOUND", "해당 숙소를 찾을 수 없습니다."),
+	LABEL_NOT_FOUND(404, "LABEL_NOT_FOUND", "등록되지 않은 라벨이 있습니다.")
 	;
 
 	private final int status;

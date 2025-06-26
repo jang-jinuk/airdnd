@@ -125,8 +125,8 @@ public class AccommodationSearchStepDef {
 			int expectedPrice = Integer.parseInt(accommodation.get("가격"));
 
 			resultActions
-				.andExpect(jsonPath("$.data.accommodations[" + i + "].name").value(expectedName))
-				.andExpect(jsonPath("$.data.accommodations[" + i + "].pricePerDay").value(expectedPrice));
+				.andExpect(jsonPath("$.data.accommodationResponses[" + i + "].name").value(expectedName))
+				.andExpect(jsonPath("$.data.accommodationResponses[" + i + "].pricePerDay").value(expectedPrice));
 		}
 	}
 }

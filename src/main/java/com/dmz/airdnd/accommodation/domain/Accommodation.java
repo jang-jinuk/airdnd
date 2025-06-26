@@ -3,6 +3,8 @@ package com.dmz.airdnd.accommodation.domain;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,7 +39,9 @@ public class Accommodation {
 	@JoinTable(
 		name = "accommodation_label",
 		joinColumns = @JoinColumn(name = "accommodation_id"),
-		inverseJoinColumns = @JoinColumn(name = "label_id")
+		inverseJoinColumns = @JoinColumn(
+			name = "label_id",
+			columnDefinition = "VARCHAR(50) NOT NULL")
 	)
 	private List<Label> labels;
 
@@ -65,7 +69,8 @@ public class Accommodation {
 	@Column(nullable = false)
 	private int bathroomCount;
 
-	@Column(nullable = false)
+	@CreationTimestamp
+	@Column(nullable = false, updatable = false)
 	private Timestamp createdAt;
 
 	private Timestamp updatedAt;

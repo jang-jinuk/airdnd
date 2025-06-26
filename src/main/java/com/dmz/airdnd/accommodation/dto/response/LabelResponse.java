@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class LabelResponse {
-	private int id;
+	private String id;
 	private String name;
 }

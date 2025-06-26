@@ -34,4 +34,15 @@ public class TestUserFactory {
 			.phone(user.getPhone())
 			.build();
 	}
+
+	public static User createTestHost(Long id) {
+		return User.builder()
+			.id(id)
+			.loginId("testHost")
+			.password("host123")
+			.email("host@test.com")
+			.role(Role.HOST)
+			.phone("010-9876-5432")
+			.build();
+	}
 }

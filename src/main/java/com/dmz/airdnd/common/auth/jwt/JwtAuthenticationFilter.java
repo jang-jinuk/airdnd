@@ -74,7 +74,10 @@ public class JwtAuthenticationFilter implements Filter {
 			writeJsonResponse(httpResponse,
 				ApiResponse.failure(e.getMessage(), ErrorCode.INVALID_JWT_TOKEN.getCode())
 			);
-			return;
+		} catch (Exception e) {
+			writeJsonResponse(httpResponse,
+				ApiResponse.failure(e.getMessage(), ErrorCode.INTERNAL_SERVER_ERROR.getCode())
+			);
 		} finally {
 			UserContext.clear();
 		}

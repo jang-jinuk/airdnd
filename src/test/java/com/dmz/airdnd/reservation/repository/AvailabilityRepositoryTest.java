@@ -58,7 +58,8 @@ class AvailabilityRepositoryTest extends AbstractContainerBase {
 	void setup() {
 		User guest = userRepository.save(TestUserFactory.createTestUser());
 		accommodation = accommodationRepository.save(TestAccommodationFactory.createTestAccommodation1());
-		reservation = reservationRepository.save(TestReservationFactory.createTestReservation(guest, accommodation));
+		reservation = reservationRepository.save(TestReservationFactory.createTestReservation(guest, accommodation,
+			LocalDate.of(2025, 7, 21), LocalDate.of(2025, 7, 23)));
 	}
 
 	@Test

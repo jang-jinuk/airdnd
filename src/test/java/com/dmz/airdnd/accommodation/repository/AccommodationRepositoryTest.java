@@ -3,6 +3,7 @@ package com.dmz.airdnd.accommodation.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -60,10 +61,27 @@ class AccommodationRepositoryTest extends AbstractContainerBase {
 		List<Accommodation> accommodationList = TestAccommodationFactory.createTestAccommodationList();
 		accommodationRepository.saveAll(accommodationList);
 
-		// todo: reservation 생성 로직 좀 더 자세히 작성하고, reservation리스트에 따라 availability를 생성하는 로직을 구현해서 fixture로 만들어야할 듯
-		Reservation reservation = reservationRepository.save(TestReservationFactory.createTestReservation(user, accommodationList.get(0)));
+		// 0: 2026-01-01 ~ 2026-01-04
+		// 1: 2026-01-01 ~ 2026-01-03
+		// 2: 2026-01-04 ~ 2026-01-07
+		// 3: 2026-01-06 ~ 2026-01-07 예약됨.
+		List<Reservation> reservationList = List.of(
+			TestReservationFactory.createTestReservation(user, accommodationList.get(0),
+				LocalDate.of(2026, 1, 1),
+				LocalDate.of(2026, 1, 4)),
+			TestReservationFactory.createTestReservation(user, accommodationList.get(1),
+				LocalDate.of(2026, 1, 1),
+				LocalDate.of(2026, 1, 3)),
+			TestReservationFactory.createTestReservation(user, accommodationList.get(2),
+				LocalDate.of(2026, 1, 4),
+				LocalDate.of(2026, 1, 7)),
+			TestReservationFactory.createTestReservation(user, accommodationList.get(3),
+				LocalDate.of(2026, 1, 6),
+				LocalDate.of(2026, 1, 7)));
 
-		List<Availability> availabilityList = TestAvailabilityFactory.createTestAvailabilities(accommodationList, reservation);
+		reservationRepository.saveAll(reservationList);
+
+		List<Availability> availabilityList = TestAvailabilityFactory.createTestAvailabilities(reservationList);
 		availabilityRepository.saveAll(availabilityList);
 
 		// when

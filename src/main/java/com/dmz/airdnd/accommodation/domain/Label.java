@@ -17,8 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Label {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private String id;
 
 	@Column(nullable = false, length = 25)
 	private String name;

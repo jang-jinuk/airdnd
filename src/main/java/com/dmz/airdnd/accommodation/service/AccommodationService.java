@@ -15,17 +15,54 @@ import com.dmz.airdnd.accommodation.dto.FilterCondition;
 import com.dmz.airdnd.accommodation.dto.request.AccommodationSearchRequest;
 import com.dmz.airdnd.accommodation.dto.response.AccommodationPageResponse;
 import com.dmz.airdnd.accommodation.mapper.AccommodationMapper;
+import com.dmz.airdnd.accommodation.domain.Label;
 import com.dmz.airdnd.accommodation.repository.AccommodationRepository;
+import com.dmz.airdnd.common.exception.AccommodationNotFound;
 import com.dmz.airdnd.common.exception.ErrorCode;
 import com.dmz.airdnd.common.exception.InvalidFilterConditionException;
+import com.dmz.airdnd.accommodation.repository.LabelRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import com.dmz.airdnd.accommodation.domain.Address;
+import com.dmz.airdnd.accommodation.dto.request.AccommodationCreateRequest;
+import com.dmz.airdnd.accommodation.dto.response.AccommodationCreateResponse;
+import com.dmz.airdnd.accommodation.mapper.AccommodationMapper;
+import com.dmz.airdnd.common.aop.RoleCheck;
+import com.dmz.airdnd.common.exception.LabelNotFoundException;
+import com.dmz.airdnd.user.domain.Role;
 
 @Service
 @RequiredArgsConstructor
 public class AccommodationService {
 
 	private final AccommodationRepository accommodationRepository;
+
+	private final LabelRepository labelRepository;
+
+	private final AddressService addressService;
+
+	@RoleCheck(Role.HOST)
+	public AccommodationCreateResponse createAccommodation(AccommodationCreateRequest request) {
+		Address address = addressService.getOrCreateByFullAddress(
+			request.getCountry(),
+			request.getBaseAddress(),
+			request.getDetailedAddress());
+
+		List<Label> labels = labelRepository.findAllById(request.getLabelIds());
+		if (labels.size() != request.getLabelIds().size()) {
+			throw new LabelNotFoundException(ErrorCode.LABEL_NOT_FOUND);
+		}
+
+		Accommodation newAccommodation = AccommodationMapper.toEntity(request, address, labels);
+		Accommodation saved = accommodationRepository.save(newAccommodation);
+		return AccommodationMapper.fromEntity(saved);
+	}
+
+	public Accommodation getAccommodationById(Long accommodationId) {
+		return accommodationRepository.findById(accommodationId)
+			.orElseThrow(() -> new AccommodationNotFound(ErrorCode.ACCOMMODATION_NOT_FOUND));
+	}
 
 	@Transactional(readOnly = true)
 	public AccommodationPageResponse findFilteredAccommodations(AccommodationSearchRequest request) {
@@ -79,4 +116,3 @@ public class AccommodationService {
 			.build();
 	}
 }
-
