@@ -1,10 +1,11 @@
 package com.dmz.airdnd.chat;
 
+import java.net.URI;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
@@ -25,14 +26,24 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 		WebSocketHandler wsHandler,
 		Map<String, Object> attributes) {
 
-		String authHeader = ((ServletServerHttpRequest)request)
-			.getServletRequest()
-			.getHeader("Authorization");
+		URI uri = request.getURI();
+		String query = uri.getQuery();
 
-		if (authHeader != null && authHeader.startsWith("Bearer ")) {
-			String token = authHeader.substring(7);
-			Long userId = Long.valueOf(jwtUtil.validateToken(token).getSubject());
-			attributes.put("userId", userId);
+		if (query != null && query.contains("token=")) {
+			String token = Arrays.stream(query.split("&"))
+				.filter(p -> p.startsWith("token="))
+				.findFirst()
+				.map(p -> p.substring("token=".length()))
+				.orElse(null);
+
+			if (token != null) {
+				try {
+					Long userId = Long.valueOf(jwtUtil.validateToken(token).getSubject());
+					attributes.put("userId", userId);
+				} catch (Exception e) {
+					return false;
+				}
+			}
 		}
 
 		return true;

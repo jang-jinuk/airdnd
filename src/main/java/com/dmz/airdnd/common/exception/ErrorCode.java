@@ -41,6 +41,8 @@ public enum ErrorCode {
 	ACCOMMODATION_NOT_FOUND(404, "ACCOMMODATION_NOT_FOUND", "해당 숙소를 찾을 수 없습니다."),
 	LABEL_NOT_FOUND(404, "LABEL_NOT_FOUND", "등록되지 않은 라벨이 있습니다."),
 	DUPLICATE_ADDRESS(409, "DUPLICATE_ADDRESS", "동일한 주소가 이미 등록되어 있습니다."),
+	// 채팅 관련
+	CHAT_ROOM_NOT_FOUND(404, "CHAT_ROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다."),
 	;
 
 	private final int status;

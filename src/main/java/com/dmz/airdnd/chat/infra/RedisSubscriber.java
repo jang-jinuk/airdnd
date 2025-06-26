@@ -7,7 +7,7 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import com.dmz.airdnd.chat.domain.ChatMessage;
+import com.dmz.airdnd.chat.dto.ChatMessageResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -25,9 +25,11 @@ public class RedisSubscriber implements MessageListener {
 	public void onMessage(Message message, byte[] pattern) {
 		try {
 			String payload = new String(message.getBody(), StandardCharsets.UTF_8);
-			ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+			log.debug("payload: {}", payload);
+			ChatMessageResponse chatMessageResponse = objectMapper.readValue(payload, ChatMessageResponse.class);
 
-			messagingTemplate.convertAndSend("/topic/chatroom/" + chatMessage.getChatRoom().getId(), chatMessage);
+			messagingTemplate.convertAndSend("/topic/chatroom/" + chatMessageResponse.getChatRoomID(),
+				chatMessageResponse);
 		} catch (Exception e) {
 			log.error("RedisSubscriber 메시지 처리 중 오류", e);
 		}
