@@ -19,9 +19,10 @@ public class AddressService {
 	private final AddressRepository addressRepository;
 	private final GeocodingClient geocodingClient;
 
-	public Address getOrCreateByFullAddress(String country, String baseAddress, String detailedAddress) {
+	public Address getOrCreateByFullAddress(String country, String baseAddress, String detailedAddress,
+		CoordinatesDto coordinates) {
 		String detail = StringUtils.trimToEmpty(detailedAddress);
-		Point geometryPoint = findPointFromBaseAddress(baseAddress);
+		Point geometryPoint = findPointFromBaseAddress(coordinates);
 
 		return addressRepository.findByBaseAddressAndDetailedAddress(baseAddress, detail)
 			.orElseGet(() -> Address.builder()
@@ -33,8 +34,7 @@ public class AddressService {
 			);
 	}
 
-	private Point findPointFromBaseAddress(String baseAddress) {
-		CoordinatesDto coordinates = geocodingClient.lookupCoordinates(baseAddress);
+	private Point findPointFromBaseAddress(CoordinatesDto coordinates) {
 		double latitude = coordinates.latitude();
 		double longitude = coordinates.longitude();
 		return GeoPointFactory.createPoint(longitude, latitude);
