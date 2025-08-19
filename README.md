@@ -66,7 +66,7 @@
 - 프로젝트에 `Dockerfile`을 통해 빌드하여 도커 이미지 파일 생성
 - 생성된 도커 이미지 파일은 `Docker Hub`에 `push`
 
-**3. Ec2에 배포**
+**3. EC2에 배포**
 
 - `SSH`를 통해 EC2 서버 접속
 - `deploy.sh`[(파일 링크)](https://github.com/jang-jinuk/be-airdnd/blob/dev/deploy.sh) 셸 스트립트 실행
