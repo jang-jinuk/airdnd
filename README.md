@@ -34,12 +34,12 @@
 
 ## 🖥️ Server Architecture
 
-<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/Server+Architecture.png" height="400">
+<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/AWS+cloud+diagram+(Community).png" height="400">
 
 설계 가이드
 
 - 서버의 부하를 분산시키고, 서버의 안정성을 높이기 위해 백엔드와 프론트엔드 서버를 분리한 서버 아키텍처를 구성했습니다.
-- 백엔드 서버의 EC2 인스턴스에 Nginx, Spring Boot 서버, Redis를 Docker 컨테이너로 배포하여 개발환경과 서버환경의 제약을 받지 않고 안전하게 운영되도록 구성했습니다.
+- 백엔드 서버의 EC2 인스턴스에 Nginx, Spring Boot 서버를 Docker 컨테이너로 배포하여 개발환경과 서버환경의 제약을 받지 않고 안전하게 운영되도록 구성했습니다.
 - 데이터베이스(MySQL, Redis)의 경우 EC2 인스턴스와 동일한 VPC 내에 생성하되 Private Subnet으로 분리하고, 데이터베이스 포트는 EC2 인스턴스에서만 접속할 수 있도록 하여 외부에서 직접
   접근하지 못하게 함으로써 보안적으로 안전한 환경을 구성했습니다.
 
