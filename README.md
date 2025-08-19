@@ -26,7 +26,7 @@
 
 ## 🛠️ Skill Stack
 
-<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/skill+stack.png">
+<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/Skill.png">
 
 ## 🗂️ ERD
 
