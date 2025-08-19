@@ -34,7 +34,7 @@
 
 ## 🖥️ Server Architecture
 
-<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/AWS+cloud+diagram+(Community).png" height="400">
+<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/AWS+cloud+diagram.png" height="400">
 
 설계 가이드
 
