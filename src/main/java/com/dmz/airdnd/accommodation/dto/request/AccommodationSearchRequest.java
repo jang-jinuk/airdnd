@@ -18,12 +18,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AccommodationSearchRequest {
 	@NotNull(message = "경도는 필수 입력값입니다.")
-	@DecimalMin(value = "0.0", inclusive = false, message = "경도는 0보다 커야 합니다.")
+	@DecimalMin(value = "-180.0", inclusive = false, message = "경도는 -180보다 커야 합니다.")
 	@DecimalMax(value = "180.0", message = "경도는 180 이하이어야 합니다.")
 	private Double longitude;
 
 	@NotNull(message = "위도는 필수 입력값입니다.")
-	@DecimalMin(value = "0.0", inclusive = false, message = "위도는 0보다 커야 합니다.")
+	@DecimalMin(value = "-90.0", inclusive = false, message = "위도는 -90보다 커야 합니다.")
 	@DecimalMax(value = "90.0", message = "위도는 90 이하이어야 합니다.")
 	private Double latitude;
 
