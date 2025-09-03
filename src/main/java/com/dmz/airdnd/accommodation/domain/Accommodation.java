@@ -3,6 +3,7 @@ package com.dmz.airdnd.accommodation.domain;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.CascadeType;
@@ -35,6 +36,7 @@ public class Accommodation {
 	@JoinColumn(name = "address_id", nullable = false)
 	private Address address;
 
+	@BatchSize(size = 30)
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "accommodation_label",

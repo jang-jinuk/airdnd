@@ -41,6 +41,7 @@ public class AccommodationRepositoryImpl implements AccommodationRepositoryCusto
 
 		List<Accommodation> accommodations = queryFactory
 			.selectFrom(accommodation)
+			.join(accommodation.address).fetchJoin()
 			.where(
 				minPrice != null ? accommodation.pricePerDay.goe(minPrice) : null,
 				maxPrice != null ? accommodation.pricePerDay.loe(maxPrice) : null,
