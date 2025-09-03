@@ -16,9 +16,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
   elasticsearch:
-    uris: ${ELASTICSEARCH_URI}
-    username: ${ELASTICSEARCH_USERNAME}
-    password: ${ELASTICSEARCH_PASSWORD}
+    uris: ${ELASTICSEARCH_URI:http://localhost:9200}
+    username: ${ELASTICSEARCH_USERNAME:}
+    password: ${ELASTICSEARCH_PASSWORD:}
 
 logging:
   pattern:
