@@ -3,7 +3,7 @@ package com.dmz.airdnd.accommodation.util;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 
-public class GeoPointFactory {
+public class GeoFactory {
 
 	private static final org.locationtech.jts.geom.GeometryFactory geometryFactory =
 		new org.locationtech.jts.geom.GeometryFactory(

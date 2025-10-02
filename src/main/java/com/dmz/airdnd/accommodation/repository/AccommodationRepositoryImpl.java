@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import com.dmz.airdnd.accommodation.domain.Accommodation;
 import com.dmz.airdnd.accommodation.domain.QAccommodation;
 import com.dmz.airdnd.accommodation.dto.FilterCondition;
-import com.dmz.airdnd.accommodation.util.GeoPointFactory;
+import com.dmz.airdnd.accommodation.util.GeoFactory;
 import com.dmz.airdnd.reservation.domain.QAvailability;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -30,14 +30,14 @@ public class AccommodationRepositoryImpl implements AccommodationRepositoryCusto
 		QAccommodation accommodation = QAccommodation.accommodation;
 		QAvailability availability = QAvailability.availability;
 
-		double lng = filterCondition.longitude();
+		double lon = filterCondition.longitude();
 		double lat = filterCondition.latitude();
 		Integer minPrice = filterCondition.minPrice();
 		Integer maxPrice = filterCondition.maxPrice();
 		Integer maxGuests = filterCondition.maxGuests();
 		List<LocalDate> requestedDates = filterCondition.requestedDates();
 
-		Point userLocation = GeoPointFactory.createPoint(lng, lat);
+		Point userLocation = GeoFactory.createPoint(lon, lat);
 
 		List<Accommodation> accommodations = queryFactory
 			.selectFrom(accommodation)
