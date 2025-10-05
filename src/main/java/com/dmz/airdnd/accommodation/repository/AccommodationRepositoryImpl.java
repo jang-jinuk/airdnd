@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,17 +33,25 @@ public class AccommodationRepositoryImpl implements AccommodationRepositoryCusto
 
 		double lon = filterCondition.longitude();
 		double lat = filterCondition.latitude();
+
 		Integer minPrice = filterCondition.minPrice();
 		Integer maxPrice = filterCondition.maxPrice();
 		Integer maxGuests = filterCondition.maxGuests();
 		List<LocalDate> requestedDates = filterCondition.requestedDates();
 
 		Point userLocation = GeoFactory.createPoint(lon, lat);
+		Polygon boundingBox = GeoFactory.createBoundingBox(lon, lat);
 
 		List<Accommodation> accommodations = queryFactory
 			.selectFrom(accommodation)
 			.join(accommodation.address).fetchJoin()
 			.where(
+				Expressions.numberTemplate(
+					Integer.class,
+					"MBRContains({0}, {1})",
+					Expressions.constant(boundingBox),
+					accommodation.address.location
+				).eq(1),
 				minPrice != null ? accommodation.pricePerDay.goe(minPrice) : null,
 				maxPrice != null ? accommodation.pricePerDay.loe(maxPrice) : null,
 				maxGuests != null ? accommodation.maxGuests.goe(maxGuests) : null,
@@ -69,6 +78,12 @@ public class AccommodationRepositoryImpl implements AccommodationRepositoryCusto
 			.select(accommodation.count())
 			.from(accommodation)
 			.where(
+				Expressions.numberTemplate(
+					Integer.class,
+					"MBRContains({0}, {1})",
+					Expressions.constant(boundingBox),
+					accommodation.address.location
+				).eq(1),
 				minPrice != null ? accommodation.pricePerDay.goe(minPrice) : null,
 				maxPrice != null ? accommodation.pricePerDay.loe(maxPrice) : null,
 				maxGuests != null ? accommodation.maxGuests.goe(maxGuests) : null,
