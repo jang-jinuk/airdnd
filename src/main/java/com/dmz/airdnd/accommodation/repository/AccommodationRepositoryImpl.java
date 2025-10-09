@@ -1,95 +1,107 @@
 package com.dmz.airdnd.accommodation.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.dmz.airdnd.accommodation.domain.Accommodation;
-import com.dmz.airdnd.accommodation.domain.QAccommodation;
 import com.dmz.airdnd.accommodation.dto.FilterCondition;
-import com.dmz.airdnd.accommodation.util.GeoPointFactory;
-import com.dmz.airdnd.reservation.domain.QAvailability;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class AccommodationRepositoryImpl implements AccommodationRepositoryCustom {
-	private final JPAQueryFactory queryFactory;
-
-	private final int RADIUS_METERS = 5000; // 5km radius
+	private final EntityManager entityManager;
+	private final int RADIUS_METERS = 5000;
 
 	@Override
 	public Page<Accommodation> findFilteredAccommodations(Pageable pageable, FilterCondition filterCondition) {
-		QAccommodation accommodation = QAccommodation.accommodation;
-		QAvailability availability = QAvailability.availability;
-
-		double lng = filterCondition.longitude();
+		double lon = filterCondition.longitude();
 		double lat = filterCondition.latitude();
-		Integer minPrice = filterCondition.minPrice();
-		Integer maxPrice = filterCondition.maxPrice();
-		Integer maxGuests = filterCondition.maxGuests();
-		List<LocalDate> requestedDates = filterCondition.requestedDates();
 
-		Point userLocation = GeoPointFactory.createPoint(lng, lat);
+		// Bounding Box 계산
+		double latDiff = RADIUS_METERS / 111045.0;
+		double lonDiff = RADIUS_METERS / (111045.0 * Math.cos(Math.toRadians(lat)));
+		double minLat = lat - latDiff;
+		double maxLat = lat + latDiff;
+		double minLon = lon - lonDiff;
+		double maxLon = lon + lonDiff;
 
-		List<Accommodation> accommodations = queryFactory
-			.selectFrom(accommodation)
-			.join(accommodation.address).fetchJoin()
-			.where(
-				minPrice != null ? accommodation.pricePerDay.goe(minPrice) : null,
-				maxPrice != null ? accommodation.pricePerDay.loe(maxPrice) : null,
-				maxGuests != null ? accommodation.maxGuests.goe(maxGuests) : null,
-				JPAExpressions.selectOne()
-					.from(availability)
-					.where(
-						availability.accommodation.eq(accommodation),
-						availability.date.in(requestedDates)
-					)
-					.notExists(),
-				Expressions.booleanTemplate(
-					"ST_Distance_Sphere({0}, {1}) <= {2}",
-					accommodation.address.location,
-					Expressions.constant(userLocation),
-					RADIUS_METERS
-				)
+		String boundingBox = String.format(
+			"POLYGON((%f %f, %f %f, %f %f, %f %f, %f %f))",
+			minLat, minLon,
+			minLat, maxLon,
+			maxLat, maxLon,
+			maxLat, minLon,
+			minLat, minLon
+		);
+
+		String userLocation = String.format("POINT(%f %f)", lon, lat);
+
+		// 데이터 조회 쿼리
+		String dataSql = """
+			SELECT a.*
+			FROM accommodation a
+			JOIN address ad ON ad.id = a.address_id
+			WHERE MBRContains(ST_GeomFromText(:boundingBox, 4326), ad.location)
+			AND a.price_per_day >= :minPrice
+			AND a.price_per_day <= :maxPrice
+			AND a.max_guests >= :maxGuests
+			AND NOT EXISTS (
+			    SELECT 1 FROM availability av
+			    WHERE av.accommodation_id = a.id
+			    AND av.date IN :dates
 			)
-			.orderBy(accommodation.pricePerDay.asc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
+			AND ST_Distance_Sphere(ad.location, ST_SRID(ST_GeomFromText(:userLocation), 4326)) <= :radius
+			ORDER BY a.price_per_day
+			LIMIT :limit OFFSET :offset
+			""";
 
-		Long total = queryFactory
-			.select(accommodation.count())
-			.from(accommodation)
-			.where(
-				minPrice != null ? accommodation.pricePerDay.goe(minPrice) : null,
-				maxPrice != null ? accommodation.pricePerDay.loe(maxPrice) : null,
-				maxGuests != null ? accommodation.maxGuests.goe(maxGuests) : null,
-				JPAExpressions.selectOne()
-					.from(availability)
-					.where(
-						availability.accommodation.eq(accommodation),
-						availability.date.in(requestedDates)
-					)
-					.notExists(),
-				Expressions.booleanTemplate(
-					"ST_Distance_Sphere({0}, {1}) <= {2}",
-					accommodation.address.location,
-					Expressions.constant(userLocation),
-					RADIUS_METERS
-				)
+		Query dataQuery = entityManager.createNativeQuery(dataSql, Accommodation.class)
+			.setParameter("boundingBox", boundingBox)
+			.setParameter("userLocation", userLocation)
+			.setParameter("minPrice", filterCondition.minPrice())
+			.setParameter("maxPrice", filterCondition.maxPrice())
+			.setParameter("maxGuests", filterCondition.maxGuests())
+			.setParameter("dates", filterCondition.requestedDates())
+			.setParameter("radius", RADIUS_METERS)
+			.setParameter("limit", pageable.getPageSize())
+			.setParameter("offset", pageable.getOffset());
+
+		@SuppressWarnings("unchecked")
+		List<Accommodation> accommodations = dataQuery.getResultList();
+
+		String countSql = """
+			SELECT COUNT(a.id)
+			FROM accommodation a
+			JOIN address ad ON ad.id = a.address_id
+			WHERE MBRContains(ST_GeomFromText(:boundingBox, 4326), ad.location)
+			AND a.price_per_day >= :minPrice
+			AND a.price_per_day <= :maxPrice
+			AND a.max_guests >= :maxGuests
+			AND NOT EXISTS (
+			    SELECT 1 FROM availability av
+			    WHERE av.accommodation_id = a.id
+			    AND av.date IN :dates
 			)
-			.fetchOne();
+			AND ST_Distance_Sphere(ad.location, ST_SRID(ST_GeomFromText(:userLocation), 4326)) <= :radius
+			""";
 
-		long safeTotal = total != null ? total : 0L;
+		Query countQuery = entityManager.createNativeQuery(countSql)
+			.setParameter("boundingBox", boundingBox)
+			.setParameter("userLocation", userLocation)
+			.setParameter("minPrice", filterCondition.minPrice())
+			.setParameter("maxPrice", filterCondition.maxPrice())
+			.setParameter("maxGuests", filterCondition.maxGuests())
+			.setParameter("dates", filterCondition.requestedDates())
+			.setParameter("radius", RADIUS_METERS);
 
-		return new PageImpl<>(accommodations, pageable, safeTotal);
+		long total = ((Number)countQuery.getSingleResult()).longValue();
+
+		return new PageImpl<>(accommodations, pageable, total);
 	}
 }

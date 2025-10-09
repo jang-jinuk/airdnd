@@ -8,7 +8,7 @@ import com.dmz.airdnd.accommodation.adapter.GeocodingClient;
 import com.dmz.airdnd.accommodation.domain.Address;
 import com.dmz.airdnd.accommodation.dto.response.CoordinatesDto;
 import com.dmz.airdnd.accommodation.repository.AddressRepository;
-import com.dmz.airdnd.accommodation.util.GeoPointFactory;
+import com.dmz.airdnd.accommodation.util.GeoFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,6 @@ public class AddressService {
 		CoordinatesDto coordinates) {
 		String detail = StringUtils.trimToEmpty(detailedAddress);
 		Point geometryPoint = findPointFromBaseAddress(coordinates);
-
 		return addressRepository.findByBaseAddressAndDetailedAddress(baseAddress, detail)
 			.orElseGet(() -> Address.builder()
 				.country(country)
@@ -37,6 +36,6 @@ public class AddressService {
 	private Point findPointFromBaseAddress(CoordinatesDto coordinates) {
 		double latitude = coordinates.latitude();
 		double longitude = coordinates.longitude();
-		return GeoPointFactory.createPoint(longitude, latitude);
+		return GeoFactory.createPoint(longitude, latitude);
 	}
 }
