@@ -53,12 +53,6 @@
 - **1000 TPS**의 부하 테스트 환경에서도 모든 요청에 대한 데이터 정합성을 **100%** 보장
 - 관련 내용 블로그 [(해당 링크)](https://mudhub.tistory.com/2)
 
-**4. 분산 환경 동시성 제어: Redis 분산 락 도입**
-
-- 단일 서버 환경에서는 비관적 락을 활용해 중복 예약 방지
-- 서버 확장(다중 서버 운영) 시 DB 락 한계로 인해 Redis 분산 락 도입
-- Redis 분산 락을 통해 다중 서버 환경에서도 안정적으로 예약 동시성 문제 해결
-
 ## 🛠️ Skill Stack
 
 <img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/Skill.png">
