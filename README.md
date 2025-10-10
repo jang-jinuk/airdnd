@@ -59,7 +59,7 @@
 
 ## 🗂️ ERD
 
-<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/Screenshot+2025-08-14+at+3.55.58%E2%80%AFPM.png" width="600">
+<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/images/ERDiagrams.png" width="600">
 
 ## 🖥️ Server Architecture
 
