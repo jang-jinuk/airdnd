@@ -7,8 +7,9 @@
 3. [ERD](#-erd)
 4. [Server Architecture](#-server-architecture)
 5. [CI/CD](#-cicd)
-6. [Trouble Shooting](#-trouble-shooting)
-7. [Reflection](#-reflection)
+6. [Test Strategy](#-test-strategy)
+7. [Trouble Shooting](#-trouble-shooting)
+8. [Reflection](#-reflection)
 
 ## 📖 Overview
 
