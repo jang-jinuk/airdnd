@@ -46,7 +46,7 @@
 
 <img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/AWS+cloud+diagram.png" height="400">
 
-설계 가이드
+**설계 가이드**
 
 - 서버의 부하를 분산시키고, 서버의 안정성을 높이기 위해 백엔드와 프론트엔드 서버를 분리한 서버 아키텍처를 구성했습니다.
 - 백엔드 서버의 EC2 인스턴스에 Nginx, Spring Boot 서버를 Docker 컨테이너로 배포하여 개발환경과 서버환경의 제약을 받지 않고 안전하게 운영되도록 구성했습니다.
@@ -55,11 +55,11 @@
 
 ## 🔄 CI/CD
 
-- Github Actions, Docker Hub, 셸 스크립트를 사용하여 CI/CD 파이프 라인을 구축했습니다.
+- GitHub Actions, Docker Hub, 셸 스크립트를 사용하여 CI/CD 파이프 라인을 구축했습니다.
 - dev 브랜치에 변경사항이 push 되면, `deploy-docker.yml`[(파일
-  링크)](https://github.com/jang-jinuk/be-airdnd/blob/dev/.github/workflows/deploy-docker.yml) 에 작성된 워크 플로우에 따라 Github
+  링크)](https://github.com/jang-jinuk/be-airdnd/blob/dev/.github/workflows/deploy-docker.yml) 에 작성된 워크 플로우에 따라 GitHub
   Actions가 동작합니다.
-- 민간한 정보(Docker Hub id/pw, Ec2 ip주소, SSH key)는 `Github Secrets`로 관리했습니다.
+- 민간한 정보(Docker Hub id/pw, Ec2 ip주소, SSH key)는 `GitHub Secrets`로 관리했습니다.
 - Nginx와 Docker를 기반으로 **Blue-Green** 배포 전략을 적용하여 서비스 중단 없이 신규 버전을 배포할 수 있는 **무중단 배포** 시스템을 구축했습니다.
 
 ### 동작 순서
@@ -80,12 +80,12 @@
 
 - `SSH`를 통해 EC2 서버 접속
 - `deploy.sh`[(파일 링크)](https://github.com/jang-jinuk/be-airdnd/blob/dev/deploy.sh) 셸 스트립트 실행
-- 현재 `nginx` 설정 파일에서 active 중인 컨테이너를 찾음
+- 현재 `Nginx` 설정 파일에서 active 중인 컨테이너를 찾음
 - `Docker Hub`에서 최신 이미지 `pull`
 - 새 컨테이너 실행 (`.env` 파일 포함)
 - 새 컨테이너가 정상 실행 되었는지 `헬스체크`
-- nginx 설정 변경 (트래픽 전환)
-- `nginx -s reload`를 통해 nginx 리로드
+- Nginx 설정 변경 (트래픽 전환)
+- `nginx -s reload`를 통해 Nginx 리로드
 - 이전 컨테이너 제거
 
 ## 🧪 Test Strategy
@@ -116,7 +116,7 @@
 - **신속한 피드백 및 개발 속도 향상:** 단위 테스트는 실행 속도가 빠르고 격리되어 있어, 작성한 코드의 결과를 즉각적으로 피드백받을 수 있었습니다. 이는 자연스럽게 **전체적인 개발 속도 향상**에
   기여했습니다.
 
-- **Mocking을 통한 의존성 제거:** Repository 계층을 제외한 나머지 Service, Controller 계층의 테스트는 Mocking 기법을 활용해 DB 연결이나 외부 API 호출(Github
+- **Mocking을 통한 의존성 제거:** Repository 계층을 제외한 나머지 Service, Controller 계층의 테스트는 Mocking 기법을 활용해 DB 연결이나 외부 API 호출(GitHub
   OAuth)의 무거운 외부 의존성을 제거했습니다.
   이를 통해 각 비즈니스 로직(Service)과 요청/응답 처리(Controller)를 격리하여 테스트했고, 테스트 실행 시간을 단축하며 테스트의 안정성 및 효율성을 극대화했습니다.
 
