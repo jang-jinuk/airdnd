@@ -36,15 +36,16 @@
 
 ## 🛠️ Skill Stack
 
-<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/Skill.png">
+<img src="https://github.com/user-attachments/assets/27d45150-a2cf-4a84-afb1-814240ad0482">
 
 ## 🗂️ ERD
 
-<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/images/ERDiagrams.png" width="600">
+<img src="https://github.com/user-attachments/assets/1564a53a-574e-4a79-bc7b-e70c41ca15ce" width="600">
 
 ## 🖥️ Server Architecture
 
-<img src="https://mudhub-bucket.s3.ap-northeast-2.amazonaws.com/gist/AWS+cloud+diagram.png" height="400">
+<img src="https://github.com/user-attachments/assets/8055be7d-4d0d-4777-b283-cea49695fd80">
+
 
 **설계 가이드**
 
