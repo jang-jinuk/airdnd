@@ -1,30 +1,27 @@
 package com.dmz.airdnd.accommodation.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import com.dmz.airdnd.accommodation.domain.Accommodation;
-import com.dmz.airdnd.accommodation.domain.QAccommodation;
 import com.dmz.airdnd.accommodation.dto.FilterCondition;
+
 import com.dmz.airdnd.accommodation.util.GeoFactory;
 import com.dmz.airdnd.reservation.domain.QAvailability;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class AccommodationRepositoryImpl implements AccommodationRepositoryCustom {
-	private final JPAQueryFactory queryFactory;
-
-	private final int RADIUS_METERS = 5000; // 5km radius
+	private final EntityManager entityManager;
+	private final int RADIUS_METERS = 5000;
 
 	@Override
 	public Page<Accommodation> findFilteredAccommodations(Pageable pageable, FilterCondition filterCondition) {
@@ -91,10 +88,20 @@ public class AccommodationRepositoryImpl implements AccommodationRepositoryCusto
 					RADIUS_METERS
 				)
 			)
-			.fetchOne();
+			AND ST_Distance_Sphere(ad.location, ST_SRID(ST_GeomFromText(:userLocation), 4326)) <= :radius
+			""";
 
-		long safeTotal = total != null ? total : 0L;
+		Query countQuery = entityManager.createNativeQuery(countSql)
+			.setParameter("boundingBox", boundingBox)
+			.setParameter("userLocation", userLocation)
+			.setParameter("minPrice", filterCondition.minPrice())
+			.setParameter("maxPrice", filterCondition.maxPrice())
+			.setParameter("maxGuests", filterCondition.maxGuests())
+			.setParameter("dates", filterCondition.requestedDates())
+			.setParameter("radius", RADIUS_METERS);
 
-		return new PageImpl<>(accommodations, pageable, safeTotal);
+		long total = ((Number)countQuery.getSingleResult()).longValue();
+
+		return new PageImpl<>(accommodations, pageable, total);
 	}
 }
