@@ -21,13 +21,13 @@ public class GeoFactory {
 		double radiusKm = 5.0;
 
 		// 위도 1도당 약 111km
-		double lonDiff = radiusKm / (111.045 * Math.cos(Math.toRadians(longitude)));
+		double lonDiff = radiusKm / (111.045 * Math.cos(Math.toRadians(latitude)));
 		double latDiff = radiusKm / 111.045;
 
-		double minLon = longitude - latDiff;
-		double maxLon = longitude + latDiff;
-		double minLat = latitude - lonDiff;
-		double maxLat = latitude + lonDiff;
+		double minLon = longitude - lonDiff;
+		double maxLon = longitude + lonDiff;
+		double minLat = latitude - latDiff;
+		double maxLat = latitude + latDiff;
 
 		Coordinate[] coordinates = new Coordinate[] {
 			new Coordinate(minLon, minLat),
